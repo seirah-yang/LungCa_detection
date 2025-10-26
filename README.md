@@ -162,11 +162,11 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 
     2) mAP50–95 = 0.47으로 병변 위치 오차는 존재하지만, 탐지 누락률은 낮다. 
 
-[graph 1. Performance]()
+![graph 1. Performance](https://github.com/seirah-yang/LungCa_detection/blob/main/performance.png)
 
     3) 폐 결절 자동 탐지 및 GGO(ground-glass opacity) 인식에 충분히 유효한 성능을 보인다.
-[img 1. Traing result1](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual.png)
-[img 2. Traing result2](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual(2).png)
+![img 1. Traing result1](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual.png)
+![img 2. Traing result2](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual(2).png)
     
     4) Fine-tuned YOLOv12m 모델은 폐암 병변 자동 탐지에서 90% 이상의 탐지 정도를 보이며 SAHI를 통해 고해상도 이미지 탐지 성능을 향상시켰다. 
 	
