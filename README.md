@@ -51,18 +51,18 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 	1) 환경 준비 및 데이터 로드 
 	
     2) 전처리 (Preprocessing)
-        
+       
 		(1) CT:
     	  •	HU 변환: window = (-1200, 400) (lung window)
     	  •	정규화: 0–1 또는 0–255
     	  •	voxel spacing 보정 필요 시 resample (1×1×1 mm)
     
-        (2) X-ray:
+		(2) X-ray:
     	  •	CLAHE(clip=2.0, tileGridSize=(8,8))
     	  •	Gaussian Denoise (σ≤1)
     	  •	intensity normalization
     
-        (3) 의료영상 전처리 주의사항:
+		(3) 의료영상 전처리 주의사항:
     	  •	Hue/Saturation 변경 (의학적 의미 상실)
     	  •	VerticalFlip (해부학적 방향 왜곡)
     	  •	Elastic 변형 강하게 적용 (병변 형태 손상)
