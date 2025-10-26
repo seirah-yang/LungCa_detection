@@ -1,2 +1,2 @@
 # LungCa_detection
-end-to-end pipeline for preprocessing, augmentation, and training to perform reliable lesion detection on lung cancer diagnostic imaging data
+This project provides an end-to-end pipeline for preprocessing, augmentation, and training to perform reliable lesion detection on lung cancer diagnostic imaging data
