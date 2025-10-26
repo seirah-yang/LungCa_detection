@@ -11,23 +11,23 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
     1) Data Preprocessing
         HU Windowing, CLAHE 적용 (대비 향상)
         OpenCV, Pydicom
-    2) ② Data Augmentation
+    2) Data Augmentation
         구조 보존 중심 변환 (Rotate, Flip, Blur 등)
         Albumentations
-    3) ③ Fine-tuning
+    3) Fine-tuning
         Pretrained YOLOv12m 모델 미세조정
         Ultralytics 8.3.221
-    4) ④ Validation
+    4) Validation
         mAP, Precision, Recall 계산
         YOLO val()
-    4) ⑤ SAHI Inference
+    4) SAHI Inference
         Slice-Aided Hyper Inference로 고해상도 영상 탐지
         SAHI
-    5) ⑥ Report Generation
+    5) Report Generation
         CSV + 그래프 기반 자동 리포트 생성
         pandas, matplotlib
    
-## Project Structure
+## 3. Project Structure
     1) Lung-Cancer-Detection-(Model)-1/
        ├── train/
        ├── valid/
@@ -45,16 +45,11 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
        │   └── yolov12m_performance.png
        └── yolov12m_test_pred/
 
-## 전처리 
-   
-
-## workflow       
-    1) 환경 준비 및 데이터 로드 
+## 4. Pipeline       
+	1) 환경 준비 및 데이터 로드 
     2) 전처리 (Preprocessing)
-      HU 윈도우링, intensity normalization, CLAHE 등
-      병변 형태 보존 필수 — 강한 blur, rotation, hue 변환 금지
-      
-        (1) CT:
+        
+		(1) CT:
     	  •	HU 변환: window = (-1200, 400) (lung window)
     	  •	정규화: 0–1 또는 0–255
     	  •	voxel spacing 보정 필요 시 resample (1×1×1 mm)
@@ -170,8 +165,8 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 [graph 1. Performance]()
 
     3) 폐 결절 자동 탐지 및 GGO(ground-glass opacity) 인식에 충분히 유효한 성능을 보인다.
-[img 1. Traing result1]()
-[img 2. Traing result2]()
+[img 1. Traing result1](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual.png)
+[img 2. Traing result2](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual(2).png)
     
     4) Fine-tuned YOLOv12m 모델은 폐암 병변 자동 탐지에서 90% 이상의 탐지 정도를 보이며 SAHI를 통해 고해상도 이미지 탐지 성능을 향상시켰다. 
 	
@@ -181,7 +176,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 폐암 조기 진단 AI 연구의 기초 데이터셋 및 모델 실험용으로 활용 가능합니다.
       
 ## Author 
-** 양 소 라 | RN, BSN, MSN **
+**양 소 라 | RN, BSN, MSN** 
 
     Clinical Data Science Researcher
     
