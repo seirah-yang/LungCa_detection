@@ -104,8 +104,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
           optimizer="SGD",
           device="cuda",
           project="runs_lung",
-          name="yolov12m_finetune2"
-        )
+          name="yolov12m_finetune2")
 ```      
     6) 검증 (Validation)
       • mAP, Precision, Recall 평가
@@ -131,8 +130,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
             model_type="ultralytics",
             model_path="/home/alpaco/homework/LungCa detection /yolov12m_finetune2/weights/best.pt",
             confidence_threshold=0.3,
-            device="cuda"
-        )
+            device="cuda")
         
         result = get_sliced_prediction(
             image="sample_ct.png",
@@ -140,8 +138,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
             slice_height=512,
             slice_width=512,
             overlap_height_ratio=0.2,
-            overlap_width_ratio=0.2
-        )
+            overlap_width_ratio=0.2)
         
         result.export_visuals(export_dir="outputs/sahi_results/")
 ```
