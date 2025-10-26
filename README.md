@@ -1,7 +1,22 @@
 # LungCa_detection
 This project provides an end-to-end pipeline for preprocessing, augmentation, and training to perform reliable lesion detection on lung cancer diagnostic imaging data
 
-
+## 전처리 
+    CT:
+    	•	HU 변환: window = (-1200, 400) (lung window)
+    	•	정규화: 0–1 또는 0–255
+    	•	voxel spacing 보정 필요 시 resample (1×1×1 mm)
+    
+    X-ray:
+    	•	CLAHE(clip=2.0, tileGridSize=(8,8))
+    	•	Gaussian Denoise (σ≤1)
+    	•	intensity normalization
+    
+    ❌ 하지 말아야 할 것:
+    	•	Hue/Saturation 변경 (의학적 의미 상실)
+    	•	VerticalFlip (해부학적 방향 왜곡)
+    	•	Elastic 변형 강하게 적용 (병변 형태 손상)
+        
 ## 파이프라인
     ① 이미지 수집 (Data Collection)
       폐 CT / X-ray 영상 확보 (DICOM, PNG, JPG 등)
