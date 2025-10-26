@@ -2,30 +2,32 @@
 This project provides an end-to-end pipeline for preprocessing, augmentation, and training to perform reliable lesion detection on lung cancer diagnostic imaging data
 
 ## 1. Overview 
-  본 프로젝트는 폐암 진단용 의료영상(CT 및 X-ray) 데이터를 대상으로 신뢰성 높은 병변(lesion) 탐지 모델을 개발하기 위한 [전처리 → 증강 → 학습 → 검증 → 슬라이싱 추론(SAHI)]의 딥러닝 파이프라인을 구현한 프로젝트입니다.
-  
-  1) 목표 : 임상현장에서 활용 가능한 AI 기반의 폐 병변 자동 탐지
+본 프로젝트는 폐암 진단용 의료영상(CT 및 X-ray) 데이터를 활용하여, 임상적으로 신뢰할 수 있는 병변(lesion) 자동 탐지 모델을 개발하기 위해 수행된 연구형 프로젝트입니다.
+
+이를 위해 의료영상의 특성을 반영한 [전처리 → 데이터 증강 → 모델 학습 → 성능 검증 → 슬라이싱 추론(SAHI)] 과정을 포함한 End-to-End 딥러닝 파이프라인을 직접 구현하였습니다.
+
+본 연구의 최종 목표는 임상 현장에서 활용 가능한 AI 기반 폐 병변 탐지 모델을 구축하여, 의료진의 판독 효율을 높이고 조기 진단 정확도를 향상시키는 것입니다.
 
 ## 2. Model Architecture 
 
     1) Data Preprocessing
-        HU Windowing, CLAHE 적용 (대비 향상)
-        OpenCV, Pydicom
+      • HU Windowing, CLAHE 적용 (대비 향상)
+      • 라이브러리 : OpenCV, Pydicom
     2) Data Augmentation
-        구조 보존 중심 변환 (Rotate, Flip, Blur 등)
-        Albumentations
+      • 구조 보존 중심 변환 (Rotate, Flip, Blur 등)
+      • 라이브러리 : Albumentations
     3) Fine-tuning
-        Pretrained YOLOv12m 모델 미세조정
-        Ultralytics 8.3.221
+      • Pretrained YOLOv12m 모델 미세조정
+      • 라이브러리 : Ultralytics 8.3.221
     4) Validation
-        mAP, Precision, Recall 계산
-        YOLO val()
+      • mAP, Precision, Recall 계산
+      • 라이브러리 : YOLO val()
     4) SAHI Inference
-        Slice-Aided Hyper Inference로 고해상도 영상 탐지
-        SAHI
+      • Slice-Aided Hyper Inference로 고해상도 영상 탐지
+      • 라이브러리 : SAHI
     5) Report Generation
-        CSV + 그래프 기반 자동 리포트 생성
-        pandas, matplotlib
+      • CSV + 그래프 기반 자동 리포트 생성
+      • 라이브러리 : pandas, matplotlib
    
 ## 3. Project Structure
     1) Lung-Cancer-Detection-(Model)-1/
@@ -47,6 +49,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 
 ## 4. Pipeline       
 	1) 환경 준비 및 데이터 로드 
+	
     2) 전처리 (Preprocessing)
         
 		(1) CT:
@@ -65,22 +68,21 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
     	  •	Elastic 변형 강하게 적용 (병변 형태 손상)
         
 ```python
-        import cv2, albumintations as A    
-        transform = A.Compose([
-            A.RandomRotate90(p=0.2),
-            A.HorizontalFlip(p=0.3),
-            A.Blur(p=0.1, blur_limit=(3,7)),
-            A.CLAHE(p=0.2, clip_limit=(1.0,4.0), tile_grid_size=(8,8)),
-            A.RandomBrightnessContrast(p=0.2)
-        ])
+      import cv2, albumintations as A    
+      transform = A.Compose([
+         A.RandomRotate90(p=0.2),
+         A.HorizontalFlip(p=0.3),
+         A.Blur(p=0.1, blur_limit=(3,7)),
+         A.CLAHE(p=0.2, clip_limit=(1.0,4.0), tile_grid_size=(8,8)),
+         A.RandomBrightnessContrast(p=0.2)])
         
-        image = cv2.imread("sample_ct.png")
-        augmented = transform(image=image)["image"]
-        cv2.imwrite("augmented_ct.png", augmented)
+       image = cv2.imread("sample_ct.png")
+       augmented = transform(image=image)["image"]
+       cv2.imwrite("augmented_ct.png", augmented)
 ```
     3) 데이터 증강 (Augmentation)
       • Albumentations로 shift, scale, brightness, noise 등 적용
-      • 의료영상 특화 구조보존(Structure-preserving) 고려하여 이미지 증강 적용
+      • 의료영상 특화 구조보존(Structure-preserving) 고려하며 이미지 증강 적용
       
     4) Fine tuning
       • yolov12m.pt (pretrained weights)를 일반 객체탐지용에서 의료 도메인에 맞게 finetuning
@@ -88,28 +90,26 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
       
     5) 학습 (Training)
       • CT/X-ray용 전처리·증강 반영 후 학습
-      • 작은 learning rate (1e-3~1e-4) 권장
 
 ```python 
-        from ultralytics import YOLO
+      from ultralytics import YOLO
         
-        model = YOLO("yolov12m.pt")  # Pretrained weights
-        
-        model.train(
-            data="/home/alpaco/homework/LungCa detection /Lung-Cancer-Detection-(Model)-1/data.yaml",
-            epochs=10,
-            imgsz=640,
-            batch=16,
-            lr0=0.001,
-            optimizer="SGD",
-            device="cuda",
-            project="runs_lung",
-            name="yolov12m_finetune2"
+      model = YOLO("yolov12m.pt")  # Pretrained weights   
+      model.train(
+          data="/home/alpaco/homework/LungCa detection /Lung-Cancer-Detection-(Model)-1/data.yaml",
+          epochs=10,
+          imgsz=640,
+          batch=16,
+          lr0=0.001,
+          optimizer="SGD",
+          device="cuda",
+          project="runs_lung",
+          name="yolov12m_finetune2"
         )
 ```      
     6) 검증 (Validation)
       • mAP, Precision, Recall 평가
-      • 과적합 여부 확인
+      • 과적합 확인
       
 ```python
         results = model.val(data="data.yaml", imgsz=640)
@@ -121,7 +121,7 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
 ```
     7) 슬라이싱 추론 (SAHI)
       • 큰 영상(>2048px)을 슬라이스별 탐지 후 병합
-      • 작은 결절 검출률 향상에 도움
+      • 작은 결절 검출률 향상
       
 ```python
         from sahi import AutoDetectionModel
@@ -156,25 +156,25 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
       • Precision = 0.879 : False positive 낮음
       • Recall = 0.835 : 대부분의 병변 탐지 성공
       
-## Result & 
+## 5. Result & performance summary
+	1) 정량적 성능 지표 
+    	(1) mAP50 = 0.9016
+			→ 실제 의료 데이터셋 기반의 R&D용 모델로 활용 가능한 실용 수준 탐지 성능을 달성했습니다.
 
-    1) mAP50 > 0.9 실제 연구 데이터셋 기반 R&D용 모델로 사용 가능하다. 
-
-    2) mAP50–95 = 0.47으로 병변 위치 오차는 존재하지만, 탐지 누락률은 낮다. 
-
+    	(2) mAP50–95 = 0.4701
+			→ 다양한 IoU 임계값 구간에서의 평균 정확도로, 병변 위치 오차는 일부 존재하지만 탐지 누락률은 낮은 수준입니다.
 ![graph 1. Performance](https://github.com/seirah-yang/LungCa_detection/blob/main/performance.png)
 
-    3) 폐 결절 자동 탐지 및 GGO(ground-glass opacity) 인식에 충분히 유효한 성능을 보인다.
+    2) 시각적 성능 검증 
+		(1) Fine-tuning을 거친 YOLOv12m 모델은 폐 결절 및 GGO(ground-glass opacity) 등 주요 병변을 인식했습니다. 
+		(2) SAHI를 통한 슬라이싱 추론(Slicing Inference) 으로 고해상도 영상의 탐지 성능을 향상시켰습니다.
 ![img 1. Traing result1](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual.png)
-![img 2. Traing result2](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_visual(2).png)
+![img 2. Traing result2](https://github.com/seirah-yang/LungCa_detection/blob/main/prediction_result(2).png)
     
-    4) Fine-tuned YOLOv12m 모델은 폐암 병변 자동 탐지에서 90% 이상의 탐지 정도를 보이며 SAHI를 통해 고해상도 이미지 탐지 성능을 향상시켰다. 
-	
-## Summary
-
-본 프로젝트는 “의료영상의 AI기반 병변 탐지 파이프라인”을 완성한 사례로 전처리–증강–학습–평가–시각화의 전 과정을 End-to-End로 통합했으며,
-폐암 조기 진단 AI 연구의 기초 데이터셋 및 모델 실험용으로 활용 가능합니다.
-      
+    3) 결론 
+		(1) Fine-tuned YOLOv12m 모델은 폐 병변 자동 탐지에서 탐지 정확도(mAP50) 90% 이상을 기록하였으며, SAHI 적용을 통해 대형·고해상도 영상의 세밀 탐지 성능을 강화했습니다.
+		(2) 본 모델은 폐 결절 및 GGO 병변의 조기 탐지를 위한 AI 기반 R&D 및 임상 연구용 프로토타입으로 적합한 수준의 성능을 보입니다.
+ 
 ## Author 
 **양 소 라 | RN, BSN, MSN** 
 
@@ -183,6 +183,6 @@ This project provides an end-to-end pipeline for preprocessing, augmentation, an
     AI Developer (End-to-End Clinical AI Bootcamp, AlphaCo)
     
     Domain Focus: Clinical Data Management & Digital Medicine
-    				- DCT
-    				- CDISC/CDASH
-    				- AI for eCRF & NLP-based Document Automation
+    			- DCT
+    			- CDISC/CDASH
+    			- AI for eCRF & NLP-based Document Automation
